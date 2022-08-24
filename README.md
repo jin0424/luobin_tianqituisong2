@@ -11,7 +11,7 @@
 ![image](https://user-images.githubusercontent.com/49942853/186188268-e27e727b-9720-4365-89b9-aab78bb23d68.png)
 上图中两个密钥为：appID ， appsecret 简称：A，B
 
-向下翻，看到如下：
+向下翻，看到如下：按照步骤，先点1，再点2
 ![image](https://user-images.githubusercontent.com/49942853/186188977-ea12e1bb-4067-4c2c-84cf-20fbb1b1f6ae.png)
 先用微信扫码，关注测试用的微信号
 
@@ -55,7 +55,32 @@ https://www.tianapi.com/
 然后如下：鼠标放到1上，然后点击2的位置
 ![image](https://user-images.githubusercontent.com/49942853/186194237-d2c48b01-d366-40a0-ad72-bb3245abb15c.png)
 
+然后就会看到如下：我的因为已经申请过了，你们自己申请就行了
+![image](https://user-images.githubusercontent.com/49942853/186284825-5ca19809-d7ec-4e2b-90b8-fc0ab936d3c5.png)
 
+如果申请结束后，返回首页的位置，你应该看到如下
+![image](https://user-images.githubusercontent.com/49942853/186284980-f8486e43-e347-4ec7-b38f-9c56b5dcf1f0.png)
+有上图的数据后，
+
+然后，首页继续找如下
+![image](https://user-images.githubusercontent.com/49942853/186285367-cab101b3-314e-4c48-b84f-3e3216a64dcf.png)
+上图为彩虹屁的密钥，简称：E
+
+好~第二步，你已经完成了啊~
+第三步，拉代码，拉git代码总会吧！不用我教了吧？
+需要教的自行百度，谢谢
+
+然后，打开下图文件
+![image](https://user-images.githubusercontent.com/49942853/186285677-e82fa467-d7f2-47e0-9119-ae6a1e446dc7.png)
+
+![image](https://user-images.githubusercontent.com/49942853/186287220-2c7bd63f-48a3-470a-af41-b62eb2507506.png)
+
+![2022-08-24_080251](https://user-images.githubusercontent.com/49942853/186286890-e9c37387-4cef-4515-8180-40761fbcfca4.png)
+
+![image](https://user-images.githubusercontent.com/49942853/186287512-907ac5a9-c691-4ac8-b6ec-68cb463349a8.png)
+
+
+![image](https://user-images.githubusercontent.com/49942853/186287832-d6b6e43a-75c8-4c5c-947b-f244d6d6ed88.png)
 
 
 
