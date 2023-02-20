@@ -3,11 +3,9 @@ package com.luobin.utils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luobin.pojo.Forecast;
-import com.luobin.pojo.Weather;
-import com.luobin.pojo.Yesterday;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,45 +23,84 @@ import java.util.Map;
 @Component
 public class WeatherUtils {
 
+    /**
+     * 地区
+     */
     private static String city;
+    /**
+     * 彩虹屁id
+     */
+    private static String chpKet;
 
     @Value("${com.city}")
     public void setSecret(String city) {WeatherUtils.city= city;}
+    @Value("${com.chpKet}")
+    public void setChpKet(String chpKet) {WeatherUtils.chpKet= chpKet;}
 
     /**
      * 天气情况获取
      * @return
      * @throws JsonProcessingException
      */
-    public static Weather getWeather() throws JsonProcessingException {
-        Map<String,String> map = new HashMap<>();
-        map.put("district_id", city);
+    public static Forecast getWeather() throws JsonProcessingException {
         RestTemplate restTemplate = new AppConfig().restTemplate();
-        String res = restTemplate.getForEntity( "http://wthrcdn.etouch.cn/weather_mini?city={district_id}", String.class, map).getBody();
+        String res = restTemplate.getForObject( "https://apis.tianapi.com/tianqi/index?city="+city+"&key="+chpKet+"&type=1", String.class);
         JSONObject json = JSONObject.parseObject(res);
-        if (!"OK".equals(json.get("desc"))){
+        String code = json.get("code").toString();
+        if (!"200".equals(code)){
             log.error("未获取到天气情况");
-            return new Weather();
+            return new Forecast();
         }
-        String yesterdayS = json.getJSONObject("data").get("yesterday").toString(); // 昨天天气
-        String city = json.getJSONObject("data").get("city").toString(); // 获取地址
-        String forecastS = json.getJSONObject("data").get("forecast").toString(); // 今天+未来4天天气
-        String ganmao = json.getJSONObject("data").get("ganmao").toString(); // 感冒
-        String wendu = json.getJSONObject("data").get("wendu").toString(); // 当前温度
 
-        ObjectMapper mapper = new ObjectMapper();
-        Yesterday yesterdayM = mapper.readValue(yesterdayS, Yesterday.class);
+        String date = json.getJSONObject("result").get("date").toString(); // 日期
+        String week = json.getJSONObject("result").get("week").toString(); // 星期
+        String province = json.getJSONObject("result").get("area").toString(); // 所属省份
+        String weather = json.getJSONObject("result").get("weather").toString(); // 实时天气（七天为早晚变化）
+        String real = json.getJSONObject("result").get("real").toString(); // 实时气温（七天仅为参考）
+        String lowest = json.getJSONObject("result").get("lowest").toString(); // 最低温（夜间温度）
+        String highest = json.getJSONObject("result").get("highest").toString(); // 最高温（日间温度）
+        String wind = json.getJSONObject("result").get("wind").toString(); // 风向（方位）
+        String windspeed = json.getJSONObject("result").get("windspeed").toString(); // 风速，km/h
+        String windsc = json.getJSONObject("result").get("windsc").toString(); // 风力
+        String pcpn = json.getJSONObject("result").get("pcpn").toString(); // 降雨量（毫米）
+        String uvIndex = json.getJSONObject("result").get("uv_index").toString(); // 紫外线强度指数
+        String aqi = json.getJSONObject("result").get("aqi").toString(); // 空气质量指数（七天无此字段）
+        String quality = json.getJSONObject("result").get("quality").toString(); // 空气质量提示（七天无此字段）
+        String vis = json.getJSONObject("result").get("vis").toString(); // 能见度（公里）
+        String humidity = json.getJSONObject("result").get("humidity").toString(); // 相对湿度（百分比）
+        String alarmlist = json.getJSONObject("result").get("alarmlist").toString(); //
+        String tips = json.getJSONObject("result").get("tips").toString(); // 生活指数提示
 
-        List<Forecast> jsonList = JSONArray.parseArray(forecastS, Forecast.class);
+        Forecast forecast = new Forecast();
 
-        Weather weather = new Weather();
-        weather.setYesterday(yesterdayM);
-        weather.setForecast(jsonList);
-        weather.setCity(city);
-        weather.setGanmao(ganmao);
-        weather.setWendu(wendu);
+        if (StringUtils.isNoneBlank(alarmlist)){
+            List<Forecast> jsonList = JSONArray.parseArray(alarmlist, Forecast.class);
+            forecast.setAlarmlist(jsonList);
+        }
 
-        return weather;
+        forecast.setDate(date);
+        forecast.setWeek(week);
+        forecast.setProvince(province);
+        forecast.setWeather(weather);
+        forecast.setReal(real);
+        forecast.setLowest(lowest);
+        forecast.setHighest(highest);
+        forecast.setWind(wind);
+        forecast.setWindspeed(windspeed);
+        forecast.setWindsc(windsc);
+
+        Map windscNC = WindscUtils.windsc(windsc);
+        forecast.setWindscName(windscNC.get("windscName").toString());
+        forecast.setWindscColour(windscNC.get("windscColour").toString());
+        forecast.setPcpn(pcpn);
+        forecast.setUvIndex(uvIndex);
+        forecast.setAqi(aqi);
+        forecast.setQuality(quality);
+        forecast.setVis(vis);
+        forecast.setHumidity(humidity);
+        forecast.setTips(tips);
+
+        return forecast;
     }
 
 
